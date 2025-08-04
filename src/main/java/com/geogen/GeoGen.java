@@ -1,35 +1,34 @@
-import com.geogen.datagen.ModWorldGenProvider;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.PackOutput;
-import net.minecraftforge.data.event.GatherDataEvent;
+package com.geogen;
+
+import com.geogen.registration.ModRegistries;
+import com.geogen.worldgen.chunk.GeoGenChunkGenerator;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import java.util.concurrent.CompletableFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mod(GeoGen.MODID)
 public class GeoGen {
-    public static final String MODID = "yourmodid";
+    public static final String MODID = "geogen";
+    public static final Logger LOGGER = LoggerFactory.getLogger(GeoGen.class);
 
     public GeoGen() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        // Register chunk generators
-        ModChunkGenerators.register(modEventBus);
+        // Register our mod components
+        ModRegistries.CHUNK_GENERATORS.register(modEventBus);
+        ModRegistries.DENSITY_FUNCTIONS.register(modEventBus);
 
-        // Register data generation
-        modEventBus.addListener(this::gatherData);
+        MinecraftForge.EVENT_BUS.register(this);
+
+        LOGGER.info("GeoGen mod initialized - Geological terrain generation loading...");
     }
 
-    @SubscribeEvent
-    public void gatherData(GatherDataEvent event) {
-        DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-
-        generator.addProvider(event.includeServer(), new ModWorldGenProvider(packOutput, lookupProvider));
+    public static ResourceLocation location(String path) {
+        return new ResourceLocation(MODID, path);
     }
 }

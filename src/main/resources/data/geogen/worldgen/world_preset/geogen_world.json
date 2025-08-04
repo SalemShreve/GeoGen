@@ -1,0 +1,155 @@
+# src/main/resources/META-INF/mods.toml
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="geogen"
+version="${file.jarVersion}"
+displayName="GeoGen"
+updateJSONURL=""
+displayURL=""
+logoFile="geogen.png"
+credits="Geological terrain generation for Minecraft"
+authors="YourName"
+description='''
+GeoGen brings realistic geological processes to Minecraft terrain generation.
+Experience worlds shaped by plate tectonics, with different rock types,
+crustal properties, and terrain features based on real geological science.
+
+Features:
+- Plate tectonic simulation with oceanic and continental crust
+- Realistic terrain generation based on geological processes
+- Different rock types with varying hardness and permeability
+- Age-based terrain evolution and boundary interactions
+'''
+
+[[dependencies.geogen]]
+modId="forge"
+mandatory=true
+versionRange="[47.2.0,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.geogen]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"
+
+---
+
+# src/main/resources/pack.mcmeta
+{
+"pack": {
+"description": "GeoGen mod resources",
+"pack_format": 15,
+"forge:resource_pack_format": 15,
+"forge:data_pack_format": 12
+}
+}
+
+---
+
+# src/main/resources/data/geogen/worldgen/density_function/tectonic_base.json
+{
+"type": "geogen:tectonic",
+"seed": 0,
+"surface_level": 64.0,
+"height_scale": 1.0
+}
+
+---
+
+# src/main/resources/data/geogen/worldgen/density_function/plate_boundaries.json
+{
+"type": "geogen:plate_boundary",
+"seed": 0,
+"boundary_threshold": 256.0
+}
+
+---
+
+# src/main/resources/data/geogen/worldgen/noise_router/geogen_overworld.json
+{
+"barrier": 0,
+"fluid_level_floodedness": 0,
+"fluid_level_spread": 0,
+"lava": 0,
+"temperature": {
+"type": "minecraft:shifted_noise",
+"noise": "minecraft:temperature",
+"xz_scale": 0.25,
+"y_scale": 0,
+"shift_x": "minecraft:shift_x",
+"shift_y": 0,
+"shift_z": "minecraft:shift_z"
+},
+"vegetation": {
+"type": "minecraft:shifted_noise",
+"noise": "minecraft:vegetation",
+"xz_scale": 0.25,
+"y_scale": 0,
+"shift_x": "minecraft:shift_x",
+"shift_y": 0,
+"shift_z": "minecraft:shift_z"
+},
+"continents": {
+"type": "geogen:plate_boundary"
+},
+"erosion": {
+"type": "geogen:plate_boundary"
+},
+"depth": 0,
+"ridges": 0,
+"initial_density_without_jaggedness": {
+"type": "geogen:tectonic"
+},
+"final_density": {
+"type": "geogen:tectonic"
+},
+"vein_toggle": 0,
+"vein_ridged": 0,
+"vein_gap": 0
+}
+
+---
+
+# src/main/resources/data/geogen/worldgen/world_preset/geogen_world.json
+{
+"dimensions": {
+"minecraft:overworld": {
+"type": "minecraft:overworld",
+"generator": {
+"type": "geogen:geogen",
+"biome_source": {
+"type": "minecraft:fixed",
+"biome": "minecraft:plains"
+},
+"seed": 0
+}
+},
+"minecraft:the_nether": {
+"type": "minecraft:the_nether",
+"generator": {
+"type": "minecraft:noise",
+"biome_source": {
+"type": "minecraft:multi_noise",
+"preset": "minecraft:nether"
+},
+"settings": "minecraft:nether"
+}
+},
+"minecraft:the_end": {
+"type": "minecraft:the_end",
+"generator": {
+"type": "minecraft:noise",
+"biome_source": {
+"type": "minecraft:the_end"
+},
+"settings": "minecraft:end"
+}
+}
+}
+}
